@@ -1,0 +1,100 @@
+{
+"data": [
+{
+"id": 20,
+"name": "关于检测云",
+"type": "底部导航",
+"link": "",
+"children": {
+"data": [
+{
+"id": 21,
+"name": "关于我们",
+"type": "底部导航",
+"link": "http://121.42.12.106:5009/api/nav/21",
+"children": {
+"data": []
+}
+},
+{
+"id": 22,
+"name": "联系我们",
+"type": "底部导航",
+"link": "http://121.42.12.106:5009/api/nav/22",
+"children": {
+"data": []
+}
+},
+{
+"id": 23,
+"name": "加入我们",
+"type": "底部导航",
+"link": "http://121.42.12.106:5009/api/nav/23",
+"children": {
+"data": []
+}
+},
+{
+"id": 24,
+"name": "媒体报道",
+"type": "底部导航",
+"link": "http://121.42.12.106:5009/api/nav/24",
+"children": {
+"data": []
+}
+}
+]
+}
+},
+{
+"id": 25,
+"name": "使用帮助",
+"type": "底部导航",
+"link": "",
+"children": {
+"data": [
+{
+"id": 26,
+"name": "如何申请项目报检",
+"type": "底部导航",
+"link": "http://121.42.12.106:5009/api/nav/26",
+"children": {
+"data": []
+}
+},
+{
+"id": 27,
+"name": "如何区分普通服务、加急和特急服务",
+"type": "底部导航",
+"link": "http://121.42.12.106:5009/api/nav/27",
+"children": {
+"data": []
+}
+},
+{
+"id": 28,
+"name": "如何保障项目的保密性",
+"type": "底部导航",
+"link": "http://121.42.12.106:5009/api/nav/28",
+"children": {
+"data": []
+}
+},
+{
+"id": 29,
+"name": "如何保障检测项目的进度和质量",
+"type": "底部导航",
+"link": "http://121.42.12.106:5009/api/nav/29",
+"children": {
+"data": []
+}
+}
+]
+}
+}
+],
+"meta": {
+"code": "0",
+"message": "ok"
+}
+}

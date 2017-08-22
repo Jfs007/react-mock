@@ -1,0 +1,22 @@
+{
+  "code": "0",
+  "message": "ok",
+  "data": [
+    {
+      "id": 34,
+      "company_name": "康师傅集团杭州分公司"
+    },
+    {
+      "id": 37,
+      "company_name": "杭州哇哈哈集团公司"
+    },
+    {
+      "id": 41,
+      "company_name": "杭州哇哈哈集团公司"
+    },
+    {
+      "id": 62,
+      "company_name": "杭州龙井茶业集团有限公司"
+    }
+  ]
+}
