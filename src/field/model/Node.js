@@ -1,4 +1,5 @@
 import Status from './status.js';
+import Typer from './typeResolution.js';
 let seed = 0;
 let option = {
 	child: 'children',
@@ -23,8 +24,9 @@ const getPropertyFromData = function (node, prop) {
 		return '';
 	}
 };
-export default class Node {
-	constructor(options, lazyMan) {
+export default class Node extends Typer {
+	constructor(options) {
+		super();
 		this.status = status;
 		this.id = ++seed;
 		this.data = null;

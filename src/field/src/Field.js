@@ -12,6 +12,7 @@ export default class Field extends Component {
 				store: this
 			})
 		}
+		console.log(this.state.root)
 		this.exchangeData = {
 			dragerData: {},
 			changerData: {}
@@ -20,6 +21,11 @@ export default class Field extends Component {
 	}
 	componentWillUpdate(nextProps, nextState) {
 		return true
+	}
+	// case 字段转化
+	mocks() {
+		let root = this.root;
+		
 	}
 	get root() {
 		return this.state.root;

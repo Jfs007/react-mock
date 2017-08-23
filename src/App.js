@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
-import './App.css';
 import { JsonConvert } from './until/until';
 import Field from './field/src/Field';
 import Ticket from './ticket.json';
+
 class App extends Component {
 	constructor(props) {
 		super(props);
