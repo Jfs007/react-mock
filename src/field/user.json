@@ -1,0 +1,82 @@
+{
+  "code": "0",
+  "message": "ok",
+  "data": {
+    "total": 6,
+    "per_page": "10",
+    "current_page": 1,
+    "last_page": 1,
+    "next_page_url": null,
+    "prev_page_url": null,
+    "from": 1,
+    "to": 6,
+    "data": [
+      {
+        "id": 132,
+        "department_id": 104,
+        "sub_department_id": null,
+        "is_root": 0,
+        "department_name": "\u7efc\u5408\u7ba1\u7406\u90e8",
+        "name": "imfine",
+        "mobile": "13588335302",
+        "role_name": "\u5408\u540c\u8bc4\u5ba1\u5458",
+        "role_id": 87
+      },
+      {
+        "id": 136,
+        "department_id": 104,
+        "sub_department_id": null,
+        "is_root": 0,
+        "department_name": "\u7efc\u5408\u7ba1\u7406\u90e8",
+        "name": "\u5927*",
+        "mobile": "13577887788",
+        "role_name": "\u7ba1\u7406\u5458",
+        "role_id": 85
+      },
+      {
+        "id": 134,
+        "department_id": 108,
+        "sub_department_id": null,
+        "is_root": 0,
+        "department_name": "\u5ba2\u670d\u90e8",
+        "name": "malone",
+        "mobile": "13671947880",
+        "role_name": "\u5ba2\u670d\u4e3b\u7ba1*",
+        "role_id": 129
+      },
+      {
+        "id": 142,
+        "department_id": 104,
+        "sub_department_id": null,
+        "is_root": 0,
+        "department_name": "\u7efc\u5408\u7ba1\u7406\u90e8",
+        "name": "\u6709\u70b9\u65b9",
+        "mobile": "15757174611",
+        "role_name": "\u5ba2\u670d\u4e3b\u7ba1*",
+        "role_id": 129
+      },
+      {
+        "id": 128,
+        "department_id": 106,
+        "sub_department_id": null,
+        "is_root": 0,
+        "department_name": "\u8d22\u52a1\u90e8",
+        "name": "\u5fd7\u6587",
+        "mobile": "15737930278",
+        "role_name": "\u8d22\u52a1*",
+        "role_id": 95
+      },
+      {
+        "id": 125,
+        "department_id": 104,
+        "sub_department_id": null,
+        "is_root": 1,
+        "department_name": "\u7efc\u5408\u7ba1\u7406\u90e8",
+        "name": "\u738b\u8d24",
+        "mobile": "18100175490",
+        "role_name": "\u8d85\u7ea7\u7ba1\u7406\u5458",
+        "role_id": -1
+      }
+    ]
+  }
+}

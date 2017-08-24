@@ -49,20 +49,21 @@ input {
   box-shadow: 0px 1px 8px 3px #000000;
 }
 .x_item {
-  display: inline-block;
+
 }
 .x_field {
 
 }
 .x_drag_index {
-  padding: 0 40px 0 20px;
+
 }
 .x_input {
-  width: 168px;
+  width: 100%;
   padding: 8px 12px;
   border: 1px solid #e0e0e0;
   border-radius: 4px;
   box-sizing: border-box;
   display: inline-block;
   background: #ffffff;
+  color: black;
 }

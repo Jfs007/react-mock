@@ -1,10 +1,29 @@
 import Status from './status.js';
 import Typer from './typeResolution.js';
 let seed = 0;
-let option = {
+let FieldOption = {
 	child: 'children',
-	label: 'name'
+	label: 'name',
+	dataType: 'dataType'
 };
+let getNewField = () => {
+	let newField = {
+		data: {
+			name: '新建字段',
+			[FieldOption['dataType']]: 'String'
+		}
+	};
+	return newField;
+}
+const types = [
+	'String',
+	'Number',
+	'Array',
+	'Object',
+	'Boolean',
+	'Null',
+	'Undefined'
+]
 let status = new Status();
 // ex
 /*
@@ -15,7 +34,7 @@ let status = new Status();
  * */
 const getPropertyFromData = function (node, prop) {
 	const data = node.data || {};
-	const config = option[prop];
+	const config = FieldOption[prop];
 	if (typeof config === 'function') {
 		return config(data, node);
 	} else if (typeof config === 'string') {
@@ -24,9 +43,8 @@ const getPropertyFromData = function (node, prop) {
 		return '';
 	}
 };
-export default class Node extends Typer {
+export default class Node {
 	constructor(options) {
-		super();
 		this.status = status;
 		this.id = ++seed;
 		this.data = null;
@@ -34,7 +52,14 @@ export default class Node extends Typer {
 		this.level = 0;
 		this.name = '';
 		this.childNodes = [];
+		this.Num = 1;
+		this.types = types;
+		this.dataType = 'String';
 		for (let key in options) {
+			if(key === 'data') {
+				let type = options[key];
+				this.dataType = type[FieldOption['dataType']];
+			}
 			this[key] = options[key];
 		}
 		if (this.parent) {
@@ -51,13 +76,33 @@ export default class Node extends Typer {
 		}
 		return root;
 	}
+	setType(type) {
+		this.dataType = type;
+		if(!this.isObject()) {
+			this.childNodes = [];
+		}
+		this.update();
+	}
+	setNum(num) {
+		this.Num = num;
+		this.update();
+	}
+	isObject() {
+		let Object = ['Array', 'Object'];
+		return !!Object.filter((e) => {
+			return this.dataType === e;
+		}).length;
+	}
+	setNum(num) {
+		this.Num = num;
+	}
 	setData(data) {
 		let child;
 		this.childNodes = [];
 		if (!this.parent && data instanceof Array) {
 			child = this.data;
 		} else {
-			child = getPropertyFromData(this, 'child') || []
+			child = getPropertyFromData(this, 'child') || [];
 		}
 		for (let i = 0; i < child.length; i++) {
 			this.insertChild({data: child[i]}, i)
@@ -81,6 +126,14 @@ export default class Node extends Typer {
 			this.childNodes.splice(index, 0, node)
 		}
 	}
+	transChild() {
+		// Num: this.Num,
+		// 	types: this.types,
+		// 	dataType: this.dataType
+		let node = new Node(
+
+		)
+	}
 	update(callback) {
 		this.store.setRoot(
 			this.root,
@@ -88,11 +141,7 @@ export default class Node extends Typer {
 		)
 	}
 	newChild() {
-		this.insertChild({
-			data: {
-				name: '新建节点'
-			}
-		}, this.childNodes.length)
+		this.insertChild(getNewField(), this.childNodes.length)
 		this.update();
 	}
 
@@ -110,7 +159,7 @@ export default class Node extends Typer {
 		let completeId = this.id;
 		let model = drager;
 		let isParent = false;
-		console.log(completeId, model.id, model)
+		//console.log(completeId, model.id, model)
 		while (model) {
 			if (model.id === completeId) {
 				console.log('禁止交换');
@@ -143,6 +192,9 @@ export default class Node extends Typer {
 		if(isParent) return false;
 		return true
 	}
+	canInsert() {
+		if(this.isObject()) return true;
+	}
 	changeName(name) {
 		this.data.name = name;
 		this.update()
@@ -152,8 +204,9 @@ export default class Node extends Typer {
 		let fieldModel = dragerModel['fieldModel'];
 		let dragerId = dragerModel['index'];
 		let drager_parent = fieldModel.parent || fieldModel;
-		drager_parent.childNodes.splice(dragerId, 1);
 		this.insertChild(fieldModel, 0);
+		drager_parent.childNodes.splice(dragerId, 1);
+		console.log(this.root, 'this.root')
 		this.update(() => {
 			callback(dragerModel)
 		});

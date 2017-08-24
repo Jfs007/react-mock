@@ -1,0 +1,10 @@
+.x_copy {
+  cursor: pointer;
+  margin-right: 10px;
+}
+.x_mockDatas_text {
+  border:none;
+  outline: none;
+  background: none;
+  width: 100%;
+}

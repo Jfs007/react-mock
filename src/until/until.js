@@ -24,13 +24,19 @@ const specType = (o) => {
 const JsonConvert = (json, option) => {
 	let defaultOption = {
 		label: 'name',
-		children: 'children'
+		children: 'children',
+		dataType: 'dataType'
 	}
 	Object.assign(defaultOption, option||{});
 	let Fields = [];
-	let instantParse = (instant, value, child) => {
+	let instantParse = (instant, value, child, type) => {
+		if(typeof child === 'string') {
+			type = child;
+			child = undefined;
+		}
 		let normal = {
-			[defaultOption['label']]: value
+			[defaultOption['label']]: value,
+			[defaultOption['dataType']]: type
 		}
 		if (!!child) {
 			Object.assign(normal, {
@@ -43,10 +49,10 @@ const JsonConvert = (json, option) => {
 		deploy(json, (value, field) => {
 			if (typeof value === 'object') {
 				let child = [];
-				instantParse(Fields, field, child);
+				instantParse(Fields, field, child, specType(value));
 				Convert(specType(value) === 'Array' ? value[0] : value, child)
 			} else {
-				instantParse(Fields, field);
+				instantParse(Fields, field, specType(value));
 			}
 		})
 	}

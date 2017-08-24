@@ -1,7 +1,9 @@
 import Component from '../../lib/Component.js';
 import { getParent } from '../../until/until.js';
+import { Row, Col, Icon, Input, Select, InputNumber } from 'antd';
 import React from 'react';
 import './Node.css';
+const Option = Select.Option;
 export default class Node extends Component {
 	constructor(props) {
 		super(props);
@@ -17,7 +19,6 @@ export default class Node extends Component {
 		// this.root = root;
 	}
 	componentDidMount() {
-		// console.log('haha')
 	}
 	// 是否有子树
 	hasChild(fieldModel) {
@@ -30,6 +31,10 @@ export default class Node extends Component {
 		return this.props.index
 	}
 	beginTime() {
+		let { fieldModel } = this.props;
+		if(!fieldModel.canInsert()) {
+			return;
+		}
 		this.timer = setTimeout(() => {
 			this.setState({
 				isTransfer: true
@@ -43,11 +48,13 @@ export default class Node extends Component {
 	_disable() {
 		let { fieldModel, root } = this.props;
 		let drager = root.getData('drager')['fieldModel'];
+		// 如果是当前就禁用
 		if(fieldModel.isCurrent(drager)) {
-			return true
+			return true;
 		};
+		// 如果不可以交换就禁用
 		if(!fieldModel.canExChange(drager)) {
-			return true
+			return true;
 		}
 	}
 	// 修改input name的值
@@ -57,6 +64,7 @@ export default class Node extends Component {
 	}
 	_dragStart(e) {
 		e.stopPropagation();
+		e.dataTransfer.dropEffect = 'copy';
 		// 设置拖拽者
 		let { fieldModel, root } = this.props;
 		root.setData('drager', {
@@ -73,21 +81,23 @@ export default class Node extends Component {
 		if(this._disable()) {
 			return;
 		}
+		//console.log('进入时要高亮')
 		this.beginTime();
 		this.setState({
-			isFolder: false,
-			isHighLight: true
+			isHighLight: true,
+			isFolder: false
 		})
-		//console.log(this.props.fieldModel.id, 'this.props.fieldModel.id')
 	}
 	_dragOver(e) {
 		e.preventDefault();
-		//this.beginTime();
-		//console.log('hhhh')
+		//console.log('我想在over上做文章');
 	}
 	_dragLeave(e) {
+		//console.log(e.target, 'hh')
 		e.stopPropagation();
+		console.log(e.currentTarget);
 		this.clearTime();
+		//console.log('离开了就不高亮')
 		this.setState({
 			isHighLight: false,
 			isTransfer: false
@@ -104,22 +114,20 @@ export default class Node extends Component {
 	}
 	_drop(e) {
 		e.stopPropagation();
+		console.log(e.clientX, e.screenX, 'e')
 		this.clearTime();
 		if(this._disable()) {
 			return;
 		}
 		let { fieldModel, root } = this.props;
+		let _this = this;
 		!this.state.isTransfer ? fieldModel.exChangeNode(
 			root.getData('drager'),
 			this.index,
 			({isSibbing, f_index, t_index}) => {
-				this.setState({
-					isHighLight: false,
-					isTransfer: false
-				})
 			}
 		): fieldModel.transferNode(root.getData('drager'), () => {
-			this.setState({
+			_this.setState({
 				isHighLight: false,
 				isTransfer: false
 			})
@@ -128,7 +136,7 @@ export default class Node extends Component {
 		// )
 	}
 	render() {
-		let pad = {paddingLeft: '10px'};
+		let pad = {paddingLeft: '15px'};
 		let { fieldModel, root } = this.props;
 		let data = fieldModel.data;
 		let state = this.state;
@@ -166,8 +174,20 @@ export default class Node extends Component {
 		return (
 			<div
 				className="field_layer"
+				onDragEnter={this._dragEnter.bind(this)}
+				onDragLeave={this._dragLeave.bind(this)}
+				onDragOver={this._dragOver.bind(this)}
+				onDrop={this._drop.bind(this)}
+			  onDragExit={
+				  (e) => {
+				  	console.log('!!!', 'yuuuu')
+				  }
+			  }
 			>
-				<div
+				<Row
+					gutter={20}
+					align="middle"
+					type="flex"
 					className={
 						this.className(
 							"x_field_content",
@@ -209,58 +229,110 @@ export default class Node extends Component {
 						}
 					}
 					onDragStart={this._dragStart.bind(this)}
-					onDragEnter={this._dragEnter.bind(this)}
-					onDragLeave={this._dragLeave.bind(this)}
-					onDrop={this._drop.bind(this)}
 					onDragEnd={this._dragEnd.bind(this)}
-					onDragOver={this._dragOver.bind(this)}
 					draggable
 				>
-					<p className={this.className('x_item','x_drag_index')}>
-						{this.index}
-					</p>
-					<p className={this.className('x_item')}>
-						<span className='x_input'>
-							<input
-								type="text"
-								value={data.name}
-								onChange={
-									(e) => {
-										this._change(e, fieldModel)
-									}
-								}
-							/>
-						</span>
-					</p>
-					<p className="x_item">
-						<span style={{marginLeft: '40px'}}>{this.hasChild(fieldModel) ? '双击显示': ''}</span>
-						<span
-							onClick={
-								(e) => {
-									fieldModel.removeChild(this.index);
-								}
-							}
-							style={{
-								marginLeft: '40px'
-							}}
-						>X {fieldModel.id}</span>
-						<span
-							onClick={
-								(e) => {
-									e.stopPropagation();
-									fieldModel.newChild();
-								  this.setState({
-									  isFolder: false
-								  })
 
+					<Col
+						className={this.className('x_drag_index')}
+					  span={1}
+					>
+						<span>
+							{this.index}
+						</span>
+					</Col>
+					<Col
+						className={this.className('field_input')}
+					  span={5}
+					>
+						<Input
+							placeholder="default field"
+							value={data.name}
+							onChange={
+								(e) => {
+									this._change(e, fieldModel)
 								}
 							}
-						  style={{
-						  	marginLeft: '40px'
-						  }}
-						>+</span>
-					</p>
-				</div>
+						/>
+					</Col>
+					<Col className='select_type' span={3}>
+						<Select
+							style={{ width: 120 }}
+							value={fieldModel.dataType}
+							onChange={(value) => {
+								fieldModel.setType(value);
+							}}
+						>
+							{
+								fieldModel.types.map((e, i) => {
+									return (
+										<Option value={e} key={i}>
+											{e}
+										</Option>
+									)
+								})
+							}
+						</Select>
+					</Col>
+					<Col className="show_down" span={2}
+						style={{
+							display: this.hasChild(fieldModel)? 'block': 'none'
+						}}
+					>
+						<span>双击显示</span>
+					</Col>
+					<Col
+						span={2}
+						className="remove_field"
+						onClick={
+							(e) => {
+								fieldModel.removeChild(this.index);
+							}
+						}
+					>
+						<Icon type="close" />
+						<span>
+							移除字段
+						</span>
+					</Col>
+					<Col
+						span={2}
+						className='add_field'
+						onClick={
+							(e) => {
+								e.stopPropagation();
+								if(!this.hasChild(fieldModel)) {
+									this.setState({
+										isFolder: false
+									})
+								}
+								fieldModel.newChild();
+							}
+						}
+					  style={{
+					  	display: fieldModel.isObject() ? 'block': 'none'
+					  }}
+					>
+						<Icon type="plus" />
+						<span>新增字段</span>
+					</Col>
+					<Col span={4}
+					     style={{
+						     display: fieldModel.dataType === 'Array' ? 'block': 'none'
+					     }}
+					>
+						<span>生产条数</span>
+						<InputNumber
+							min={1}
+							max={1000}
+							value={fieldModel.Num}
+							onChange={(num) => {
+							fieldModel.setNum(num);
+								}
+							}
+						/>
+					</Col>
+				</Row>
 				{generateChild(fieldModel)}
 			</div>
 		)
