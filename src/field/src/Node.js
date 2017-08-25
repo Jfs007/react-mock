@@ -1,6 +1,16 @@
 import Component from '../../lib/Component.js';
 import { getParent } from '../../until/until.js';
-import { Row, Col, Icon, Input, Select, InputNumber } from 'antd';
+import {
+	Col,
+	Row,
+	Icon,
+	Input,
+	Modal,
+	Button,
+	Select,
+	message,
+	InputNumber,
+	 } from 'antd';
 import React from 'react';
 import './Node.css';
 const Option = Select.Option;
@@ -15,7 +25,7 @@ export default class Node extends Component {
 			isTransfer: false
 		}
 		this.timer = null;
-
+		this.currentNode = '';
 		// this.root = root;
 	}
 	componentDidMount() {
@@ -43,6 +53,9 @@ export default class Node extends Component {
 	}
 	clearTime() {
 		clearTimeout(this.timer);
+		this.setState({
+			isTransfer: false
+		})
 	}
 	// 禁用管理
 	_disable() {
@@ -81,7 +94,7 @@ export default class Node extends Component {
 		if(this._disable()) {
 			return;
 		}
-		//console.log('进入时要高亮')
+		this.currentNode = e.target;
 		this.beginTime();
 		this.setState({
 			isHighLight: true,
@@ -95,18 +108,15 @@ export default class Node extends Component {
 	_dragLeave(e) {
 		//console.log(e.target, 'hh')
 		e.stopPropagation();
-		console.log(e.currentTarget);
+		 //console.log(e.currentTarget);
 		this.clearTime();
+		if(this.currentNode!==e.target) {
+			return;
+		}
 		//console.log('离开了就不高亮')
 		this.setState({
-			isHighLight: false,
-			isTransfer: false
+			isHighLight: false
 		})
-		//this.clearTime();
-		//e.target.style.background = 'green';
-		//let target = getParent(e.target, { 'data-box': 'drag'});
-		// target.style.boxShadow = "none";
-		// target.style.background = "#fff"
 
 	}
 	_dragEnd(e) {
@@ -114,24 +124,23 @@ export default class Node extends Component {
 	}
 	_drop(e) {
 		e.stopPropagation();
-		console.log(e.clientX, e.screenX, 'e')
 		this.clearTime();
 		if(this._disable()) {
 			return;
 		}
 		let { fieldModel, root } = this.props;
 		let _this = this;
+		let callback = () => {
+			_this.setState({
+				isHighLight: false
+			})
+			message.success('拖拽完成')
+		}
 		!this.state.isTransfer ? fieldModel.exChangeNode(
 			root.getData('drager'),
 			this.index,
-			({isSibbing, f_index, t_index}) => {
-			}
-		): fieldModel.transferNode(root.getData('drager'), () => {
-			_this.setState({
-				isHighLight: false,
-				isTransfer: false
-			})
-		});
+			callback)
+		: fieldModel.transferNode(root.getData('drager'), callback);
 		// cons-----!
 		// )
 	}
@@ -172,17 +181,12 @@ export default class Node extends Component {
 			}
 		}
 		return (
-			<div
-				className="field_layer"
-				onDragEnter={this._dragEnter.bind(this)}
-				onDragLeave={this._dragLeave.bind(this)}
-				onDragOver={this._dragOver.bind(this)}
-				onDrop={this._drop.bind(this)}
-			  onDragExit={
-				  (e) => {
-				  	console.log('!!!', 'yuuuu')
-				  }
-			  }
+			<Row
+				className={
+					this.className(
+						"field_layer"
+					)
+				}
 			>
 				<Row
 					gutter={20}
@@ -217,15 +221,13 @@ export default class Node extends Component {
 							})
 						}
 					}
-					onMouseOver={
+					onDragEnter={this._dragEnter.bind(this)}
+					onDragLeave={this._dragLeave.bind(this)}
+					onDragOver={this._dragOver.bind(this)}
+					onDrop={this._drop.bind(this)}
+					onDragExit={
 						(e) => {
-							//console.log('我hover过来了', fieldModel.id)
-						}
-					}
-					onMouseOut={
-						(e) => {
-
-							//console.log('我hover出去了😯', fieldModel.id)
+							console.log('DragExit!!!')
 						}
 					}
 					onDragStart={this._dragStart.bind(this)}
@@ -332,9 +334,25 @@ export default class Node extends Component {
 							}
 						/>
 					</Col>
+					<Col
+						span={5}
+						style={{
+							display: !fieldModel.isObject() ? 'block': 'none'
+						}}
+					>
+						<span>
+							<span> 设置数据</span>
+							<Button
+								onClick={() => {
+									root.setcurrentModel(fieldModel)
+									root.showModel();
+								}}
+							>{fieldModel.mockDatas.name || '设置数据'}</Button>
+						</span>
+					</Col>
 				</Row>
 				{generateChild(fieldModel)}
-			</div>
+			</Row>
 		)
 	}
 }

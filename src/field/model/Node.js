@@ -54,6 +54,7 @@ export default class Node {
 		this.childNodes = [];
 		this.Num = 1;
 		this.types = types;
+		this.mockDatas = '';
 		this.dataType = 'String';
 		for (let key in options) {
 			if(key === 'data') {
@@ -76,10 +77,16 @@ export default class Node {
 		}
 		return root;
 	}
+	setMockDatas(mockdatas) {
+		this.mockDatas = mockdatas;
+		this.update();
+	}
 	setType(type) {
 		this.dataType = type;
 		if(!this.isObject()) {
 			this.childNodes = [];
+		}else {
+			this.mockDatas = '';
 		}
 		this.update();
 	}
@@ -168,7 +175,7 @@ export default class Node {
 			}
 			if(!!model) {
 				model = model.parent;
-				console.log(model&&model.id, completeId)
+				//console.log(model&&model.id, completeId)
 			}
 		}
 		return isParent
