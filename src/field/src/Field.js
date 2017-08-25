@@ -7,25 +7,30 @@ import {Icon, message} from 'antd';
 import {JsonConvert} from '../../until/until';
 import {Button, Row, Input, Modal} from 'antd';
 import Ticket from '../../ticket.json';
-import Navs from '../../Navs.json';
+// import Navs from '../../Navs.json';
 import Lists from '../../lists.json';
 import Users from '../user.json';
 import '../field.css'
+let Navs = '{'
 export default class Field extends Component {
 	constructor(props) {
 		super(props);
-		let fieldsData = JsonConvert(Ticket);
+		let outData = JsonConvert(Ticket);
+		if(outData.error) {
+			message.error(outData.error.message);
+		}else {
+			this.state = {
+				root: new node({
+					data: outData.data || [],
+					store: this
+				}),
+				mockDatas: {},
+				visible: false,
+				currentModel: ''
+			}
+		}
 		// let { fieldsData } = this.props;
 		//fieldsData = null;
-		this.state = {
-			root: new node({
-				data: fieldsData || [],
-				store: this
-			}),
-			mockDatas: {},
-			visible: false,
-			currentModel: ''
-		}
 		this.exchangeData = {
 			dragerData: {},
 			changerData: {}
@@ -79,39 +84,57 @@ export default class Field extends Component {
 
 	setMockField(json) {
 		//console.log(json)
-		let fieldsData = JsonConvert(json);
-		this.setState({
-			root: new node({
-				data: fieldsData || [],
-				store: this
+		let outData = JsonConvert(json);
+		console.log(outData, 'outData')
+		if(outData.error) {
+			message.error(outData.error.message);
+		}else {
+			this.setState({
+				root: new node({
+					data: outData.data || [],
+					store: this
+				})
 			})
-		})
+		}
 	}
 
 	toMock() {
 		let template = {};
-		let Models = this.root.childNodes;
+		let Models = this.root;
+		/*
+		*
+		* Models [ {data:xx, childNodes: [] }, {}, {}]
+		*
+		* */
 		let genTemplate = (models, templ) => {
-			models.map((model, i) => {
-				let field = model['data'].name;
-				let type = model.dataType;
-				let Num = model.Num;
-				let mockDatas = model.mockDatas;
-				if (type === 'Array') {
-					field = `${field}|${Num}`;
+				if(models.childNodes.length<=0) {
+					return;
 				}
-				if (type === 'Object' || type === 'Array') {
-					let array = new Array();
-					array.push({})
-					let temp = type === 'Object' ? {} : array;
-					templ[field] = temp;
-					genTemplate(model.childNodes, type === 'Object' ? temp : temp[0])
-				} else {
-					templ[field] = mockDatas.type || '没有设置数据';
-				}
-			})
+				models.childNodes.forEach((model, i) => {
+					let field = model['data'].name;
+					let type = model.dataType;
+					let Num = model.Num;
+					let mockDatas = model.mockDatas;
+					let hasChild = model.childNodes.length;
+					if (type === 'Array') {
+						field = `${field}|${Num}`;
+					}
+					if ((type === 'Object' || type === 'Array')&&hasChild) {
+						let array = [];
+						array.push({})
+						let temp = type === 'Object' ? {} : array;
+						templ[field] = temp;
+						genTemplate(model, type === 'Object' ? temp : temp[0])
+					} else {
+						let mockThis = mockDatas.type || '没有设置数据';
+						type === 'Array' ?
+							( templ[field] = [mockThis] ):
+							( templ[field] = mockThis );
+					}
+				})
 		}
 		genTemplate(Models, template);
+		 // console.log(template, Models)
 		let mockDatas = Mock.mock(template);
 		this.setState({
 			mockDatas
@@ -156,6 +179,13 @@ export default class Field extends Component {
 		return (
 			<div>
 				<Row>
+					<Input
+						value=''
+						onChange={(e) => {
+							this.setMockField(e.target.value);
+						}}
+					>
+					</Input>
 					<Button type="primary" onClick={
 						(e) => {
 							this.setMockField(Ticket);

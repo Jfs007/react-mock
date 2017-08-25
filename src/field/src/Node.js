@@ -12,6 +12,7 @@ import {
 	InputNumber,
 	 } from 'antd';
 import React from 'react';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import './Node.css';
 const Option = Select.Option;
 export default class Node extends Component {
@@ -151,8 +152,12 @@ export default class Node extends Component {
 		let state = this.state;
 		let generateChild = (fieldModel) => {
 			let hasChild = this.hasChild(fieldModel);
-			if(hasChild) {
+			if(hasChild&&!state.isFolder) {
 				return (
+				<ReactCSSTransitionGroup
+					transitionName="example"
+					transitionEnterTimeout={500}
+					transitionLeaveTimeout={300}>
 					<div
 						className={
 							this.className(
@@ -175,6 +180,7 @@ export default class Node extends Component {
 							})
 						}
 					</div>
+				</ReactCSSTransitionGroup>
 				)
 			}else {
 				return null;
